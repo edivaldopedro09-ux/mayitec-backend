@@ -1,33 +1,14 @@
 {
   "compilerOptions": {
-    // 1. Layout de Ficheiros (Crítico para criar a pasta dist)
-    "rootDir": "./src",
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "outDir": "./dist",
-
-    // 2. Configurações de Ambiente para Módulos Modernos (ES Modules)
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "target": "es2022",
-    "lib": ["esnext"],
-
-    // 3. Mapas de Código (Útil para debugar erros)
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    // 4. Verificação de Tipos Estrita (Mantém o teu código seguro)
+    "rootDir": "./src",
     "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // 5. Opções de Compatibilidade e Recomendadas
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    
-    // Desativamos para aceitar as tuas importações normais sem erros de sintaxe
-    "verbatimModuleSyntax": false
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*"]
 }
