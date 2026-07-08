@@ -1,6 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express'; // Adicionado Request, Response, NextFunction
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -39,7 +39,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Rota de teste
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
     res.send('API da Loja Online a funcionar!');
 });
 
@@ -53,10 +53,10 @@ if (!mongoUri) {
         .catch((err) => console.error('❌ Erro ao conectar ao MongoDB:', err));
 }
 
-// 5. GLOBAL ERROR HANDLER (Isto vai finalmente mostrar o erro no LOG do Render)
-app.use((err, req, res, next) => {
+// 5. GLOBAL ERROR HANDLER COM TIPAGEM TYPESCRIPT (Corrige os erros TS7006)
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error("❌ ERRO DETETADO NO SERVIDOR:");
-    console.error(err.stack); // Isto imprime todo o rasto do erro no log
+    console.error(err.stack); // Isto imprime todo o rasto do erro no log do Render
     
     res.status(500).json({ 
         message: "Erro interno do servidor", 
