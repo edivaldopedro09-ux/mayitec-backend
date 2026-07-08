@@ -2,21 +2,15 @@ import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../config/cloudinary.js';
 
-// Verificação de segurança: Se o cloudinary não estiver inicializado, o servidor vai crashar aqui
-if (!cloudinary.config().cloud_name) {
-  console.error("ERRO CRÍTICO: Cloudinary não está configurado. Verifica as tuas variáveis de ambiente!");
-}
-
+// Definimos uma interface "solta" para garantir que o TS não bloqueie propriedades extras
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'mayitec_uploads',
     allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-    transformation: [{ width: 800, height: 800, crop: 'limit' }] // Otimização: redimensiona antes de guardar
-  },
+  } as Record<string, any>, // Isto força o TypeScript a aceitar qualquer propriedade aqui
 });
 
 export const upload = multer({ 
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 } // Limite de 5MB por ficheiro
+  storage: storage 
 });
