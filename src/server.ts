@@ -1,5 +1,4 @@
 import path from 'path';
-import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -10,25 +9,25 @@ import orderRoutes from './routes/orderRoutes';
 
 dotenv.config();
 
-// 1. Definição obrigatória para ES Modules
-const __dirname = path.dirname(__filename);
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 2. Middlewares
-app.use(cors()); // Se necessário, podemos restringir isto depois, mas para já funciona
+// Middlewares
+// Permite acesso de qualquer origem. 
+// Em produção, podes restringir para: app.use(cors({ origin: 'https://mayitec.vercel.app' }));
+app.use(cors()); 
 app.use(express.json());
 
-// 3. Rotas da API
+// Rotas da API
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 
-// Servir ficheiros estáticos (agora que o __dirname existe, isto vai funcionar)
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// Servir ficheiros estáticos (A CORREÇÃO DO ERRO)
+// process.cwd() aponta para a raiz do teu projeto, evitando erros de caminho em ESM
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// 4. Conexão ao MongoDB
+// Conexão ao MongoDB Atlas
 const mongoUri = process.env.MONGO_URI || '';
 if (!mongoUri) {
   console.error('❌ Erro: A variável MONGO_URI não está definida no arquivo .env');
@@ -38,10 +37,12 @@ mongoose.connect(mongoUri)
   .then(() => console.log('✅ Conectado com sucesso ao MongoDB Atlas!'))
   .catch((err) => console.error('❌ Erro ao conectar ao MongoDB:', err));
 
+// Rota base de teste
 app.get('/', (req, res) => {
   res.send('API da Loja Online a funcionar!');
 });
 
+// Inicialização do Servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor a correr na porta ${PORT}`);
 });
