@@ -3,7 +3,6 @@ import { User } from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Interface para estender o Request do Express
 interface AuthRequest extends Request {
   user?: any;
   file?: any;
@@ -14,11 +13,9 @@ const generateToken = (id: string) => {
   return jwt.sign({ id }, secret, { expiresIn: '30d' });
 };
 
-// @desc    Registar um novo utilizador
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password } = req.body;
-
     const userExists = await User.findOne({ email });
     if (userExists) {
       res.status(400).json({ message: 'Este email já está registado' });
@@ -52,18 +49,12 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// @desc    Autenticar utilizador e obter token
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
-
-    // --- LOG DE DIAGNÓSTICO (Olhe o terminal do backend) ---
-    console.log('Tentativa de Login:', { email, passwordReceived: !!password });
-
     const user = await User.findOne({ email });
 
     if (!user) {
-      console.log('LOGIN FALHOU: Utilizador não encontrado');
       res.status(401).json({ message: 'Email ou palavra-passe incorretos' });
       return;
     }
@@ -71,7 +62,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const isMatch = await bcrypt.compare(password, user.password);
     
     if (isMatch) {
-      console.log('LOGIN SUCESSO: Utilizador autenticado');
       res.json({
         _id: user._id,
         name: user.name,
@@ -82,7 +72,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         token: generateToken(user._id.toString())
       });
     } else {
-      console.log('LOGIN FALHOU: Palavra-passe incorreta');
       res.status(401).json({ message: 'Email ou palavra-passe incorretos' });
     }
   } catch (error: any) {
@@ -90,11 +79,9 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// @desc    Obter perfil do utilizador
 export const getUserProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const user = await User.findById(req.user._id);
-
     if (user) {
       res.json({
         _id: user._id,
@@ -113,7 +100,6 @@ export const getUserProfile = async (req: AuthRequest, res: Response): Promise<v
   }
 };
 
-// @desc    Atualizar perfil do utilizador
 export const updateUserProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const user = await User.findById(req.user._id);
@@ -127,8 +113,10 @@ export const updateUserProfile = async (req: AuthRequest, res: Response): Promis
         user.password = await bcrypt.hash(req.body.password, salt);
       }
 
+      // CORREÇÃO AQUI: Cloudinary retorna o URL completo em req.file.path
       if (req.file) {
-        user.profilePic = `/uploads/${req.file.filename}`;
+        user.profilePic = req.file.path; 
+        console.log("Nova foto de perfil definida:", req.file.path);
       }
 
       const updatedUser = await user.save();
@@ -147,11 +135,11 @@ export const updateUserProfile = async (req: AuthRequest, res: Response): Promis
       res.status(404).json({ message: 'Utilizador não encontrado' });
     }
   } catch (error: any) {
+    console.error("Erro crítico em updateUserProfile:", error);
     res.status(500).json({ message: 'Erro interno ao atualizar perfil', error: error.message });
   }
 };
 
-// @desc    Listar todos os utilizadores (Admin)
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users = await User.find({}).select('-password'); 
