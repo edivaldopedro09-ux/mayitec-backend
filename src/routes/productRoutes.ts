@@ -5,9 +5,9 @@ import {
   createProduct, 
   updateProduct, 
   deleteProduct 
-} from '../controllers/productController';
-import { protect, admin } from '../middleware/authMiddleware';
-import { upload } from '../middleware/uploadMiddleware'; // Importa o multer
+} from '../controllers/productController.js';
+import { protect, admin } from '../middleware/authMiddleware.js';
+import { upload } from '../middleware/uploadMiddleware.js'; // Importa o multer
 
 const router = Router();
 

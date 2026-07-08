@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 
 // Extensão da interface Request do Express para aceitar o objeto user customizado
 export interface AuthenticatedRequest extends Request {
