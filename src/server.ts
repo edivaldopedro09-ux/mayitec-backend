@@ -10,42 +10,51 @@ import orderRoutes from './routes/orderRoutes.js';
 
 dotenv.config();
 
-// 1. Correção para ES Modules (__dirname)
+// Configuração de __dirname para ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// 1. CORS Configuration - ÚNICA e ANTES das rotas
+// Removemos a barra final (/) da URL da Vercel para evitar problemas de correspondência
+const allowedOrigins = ['http://localhost:5173', 'https://mayitec.vercel.app'];
+
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true, // Importante se usares cookies ou autorização complexa
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 // 2. Middlewares
-app.use(cors()); 
 app.use(express.json());
 
 // 3. Rotas da API
-// IMPORTANTE: Todas as tuas chamadas no Frontend DEVEM começar por /api
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
-app.use(cors({
-    origin: ['http://localhost:5173', 'https://mayitec.vercel.app/']
-}));
+
 // Servir ficheiros estáticos (uploads)
+// Certifica-te que a pasta 'uploads' existe na raiz do projeto
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Rota de teste
+app.get('/', (req, res) => {
+    res.send('API da Loja Online a funcionar!');
+});
 
 // 4. Conexão ao MongoDB
 const mongoUri = process.env.MONGO_URI || '';
 if (!mongoUri) {
-  console.error('❌ Erro: A variável MONGO_URI não está definida no arquivo .env');
+    console.error('❌ Erro: A variável MONGO_URI não está definida no ficheiro .env');
+} else {
+    mongoose.connect(mongoUri)
+        .then(() => console.log('✅ Conectado com sucesso ao MongoDB Atlas!'))
+        .catch((err) => console.error('❌ Erro ao conectar ao MongoDB:', err));
 }
 
-mongoose.connect(mongoUri)
-  .then(() => console.log('✅ Conectado com sucesso ao MongoDB Atlas!'))
-  .catch((err) => console.error('❌ Erro ao conectar ao MongoDB:', err));
-
-app.get('/', (req, res) => {
-  res.send('API da Loja Online a funcionar!');
-});
-
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor a correr na porta ${PORT}`);
+    console.log(`🚀 Servidor a correr na porta ${PORT}`);
 });
