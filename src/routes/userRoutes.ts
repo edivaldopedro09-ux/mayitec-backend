@@ -1,5 +1,11 @@
 import express from 'express';
-import { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers } from '../controllers/userController.js'; 
+import { 
+    registerUser, 
+    loginUser, 
+    getUserProfile, 
+    updateUserProfile, 
+    getUsers 
+} from '../controllers/userController.js'; 
 import { protect } from '../middleware/authMiddleware.js'; 
 import { upload } from '../middleware/uploadMiddleware.js'; 
 
@@ -12,7 +18,12 @@ router.post('/login', loginUser);
 // Rotas Privadas (Requerem Token JWT)
 router.get('/profile', protect, getUserProfile);
 
-// A rota abaixo é onde ocorre o erro 500 se o middleware ou o controlador falharem
+/**
+ * Rota de Atualização de Perfil
+ * protect: Verifica se o utilizador está logado
+ * upload.single('image'): Processa o ficheiro enviado com a chave 'image'
+ * updateUserProfile: O controlador que guarda a URL no MongoDB
+ */
 router.put('/profile', protect, upload.single('image'), updateUserProfile); 
 
 // Rota Administrativa

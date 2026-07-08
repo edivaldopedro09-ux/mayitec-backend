@@ -18,7 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // 1. CORS Configuration
-const allowedOrigins = ['http://localhost:5173', 'https://mayitec.vercel.app'];
+const allowedOrigins = ['http://localhost:5173', 'https://mayitec.com', 'https://www.mayitec.com', 'https://mayitec.vercel.app'];
 
 app.use(cors({
     origin: allowedOrigins,
