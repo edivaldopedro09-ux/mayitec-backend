@@ -26,7 +26,9 @@ app.use(express.json());
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
-
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://mayitec.vercel.app/']
+}));
 // Servir ficheiros estáticos (uploads)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
