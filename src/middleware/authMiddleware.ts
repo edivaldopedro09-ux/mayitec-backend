@@ -22,7 +22,8 @@ export const protect = async (req: AuthenticatedRequest, res: Response, next: Ne
       token = req.headers.authorization.split(' ')[1];
 
       // Verificar e descodificar o token com a nossa chave secreta do .env
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'chave_secreta_padrao_super_segura') as JwtPayload;
+     const secret = (process.env.JWT_SECRET as string) || 'chave_secreta_padrao_super_segura';
+const decoded = jwt.verify(token, secret) as any;
 
       // Procurar o utilizador no MongoDB Atlas tirando a senha do retorno por segurança (.select('-password'))
       req.user = await User.findById(decoded.id).select('-password');

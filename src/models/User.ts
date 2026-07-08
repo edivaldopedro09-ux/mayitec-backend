@@ -5,6 +5,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   isAdmin: boolean;
+  orders?: any[];
   address?: string;    // Adicionado para suportar a morada do utilizador
   profilePic?: string; // Adicionado para guardar o caminho da foto de perfil
   createdAt: Date;
