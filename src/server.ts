@@ -17,13 +17,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 1. CORS Configuration - ÚNICA e ANTES das rotas
-// Removemos a barra final (/) da URL da Vercel para evitar problemas de correspondência
+// 1. CORS Configuration
 const allowedOrigins = ['http://localhost:5173', 'https://mayitec.vercel.app'];
 
 app.use(cors({
     origin: allowedOrigins,
-    credentials: true, // Importante se usares cookies ou autorização complexa
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -37,7 +36,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 
 // Servir ficheiros estáticos (uploads)
-// Certifica-te que a pasta 'uploads' existe na raiz do projeto
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Rota de teste
@@ -54,6 +52,17 @@ if (!mongoUri) {
         .then(() => console.log('✅ Conectado com sucesso ao MongoDB Atlas!'))
         .catch((err) => console.error('❌ Erro ao conectar ao MongoDB:', err));
 }
+
+// 5. GLOBAL ERROR HANDLER (Isto vai finalmente mostrar o erro no LOG do Render)
+app.use((err, req, res, next) => {
+    console.error("❌ ERRO DETETADO NO SERVIDOR:");
+    console.error(err.stack); // Isto imprime todo o rasto do erro no log
+    
+    res.status(500).json({ 
+        message: "Erro interno do servidor", 
+        error: process.env.NODE_ENV === 'production' ? 'Ocorreu um erro no processamento do ficheiro' : err.message 
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`🚀 Servidor a correr na porta ${PORT}`);
