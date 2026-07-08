@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
-import { Order } from '../models/Order';
-import { Product } from '../models/Product';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
+import { Order } from '../models/Order.js';
+import { Product } from '../models/Product.js';
 
 // @desc    Criar uma nova encomenda (Checkout)
 // @route   POST /api/orders

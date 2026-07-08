@@ -1,8 +1,8 @@
 import express from 'express';
 // 1. Importámos a nova função 'getUsers' que vais adicionar ao teu controlador
-import { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers } from '../controllers/userController'; 
-import { protect } from '../middleware/authMiddleware'; 
-import { upload } from '../middleware/uploadMiddleware'; 
+import { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers } from '../controllers/userController.js'; 
+import { protect } from '../middleware/authMiddleware.js'; 
+import { upload } from '../middleware/uploadMiddleware.js'; 
 
 const router = express.Router();
 

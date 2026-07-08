@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { User } from '../models/User'; // Ajuste: import { User }
+import { User } from '../models/User.js'; // Ajuste: import { User }
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 
