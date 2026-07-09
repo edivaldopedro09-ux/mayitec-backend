@@ -36,14 +36,14 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
   try {
     const { name, description, price, stock, category } = req.body;
     
-    // Captura o caminho da imagem se existir, senão usa uma string vazia ou placeholder
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+    // O Cloudinary devolve o link completo (https://...) diretamente no req.file.path
+    const imageUrl = req.file ? req.file.path : '';
 
     const product = new Product({
       name,
       description,
       price,
-      imageUrl, // Utiliza o caminho processado pelo multer
+      imageUrl, // Guarda a URL da nuvem no MongoDB
       stock,
       category
     });
@@ -70,9 +70,9 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       product.stock = stock !== undefined ? stock : product.stock;
       product.category = category || product.category;
       
-      // Se uma nova imagem for enviada, atualizamos o path
+      // Se uma nova imagem for enviada para o Cloudinary, atualizamos o link
       if (req.file) {
-        product.imageUrl = `/uploads/${req.file.filename}`;
+        product.imageUrl = req.file.path;
       }
 
       const updatedProduct = await product.save();

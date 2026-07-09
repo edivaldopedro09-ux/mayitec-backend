@@ -7,7 +7,7 @@ import {
   deleteProduct 
 } from '../controllers/productController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
-import { upload } from '../middleware/uploadMiddleware.js'; // Importa o multer
+import { upload } from '../middleware/uploadMiddleware.js'; // Middleware do Cloudinary
 
 const router = Router();
 
@@ -16,10 +16,12 @@ router.get('/', getProducts);
 router.get('/:id', getProductById);
 
 // --- ROTAS DE ADMINISTRADOR ---
-// Adicionamos upload.single('image') aqui!
+// Faz o upload da imagem ao criar o produto
 router.post('/', protect, admin, upload.single('image'), createProduct); 
 
-router.put('/:id', protect, admin, updateProduct);
+// ADICIONADO: upload.single('image') para permitir alterar a foto na atualização do produto
+router.put('/:id', protect, admin, upload.single('image'), updateProduct);
+
 router.delete('/:id', protect, admin, deleteProduct);
 
 export default router;
